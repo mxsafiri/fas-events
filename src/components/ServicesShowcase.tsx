@@ -1,31 +1,32 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 
 const services = [
   {
     key: 'catering',
     title: 'Catering',
     desc: 'Delicious menus crafted for you',
-    img: '/[image] - 8048739.jpeg',
+    img: '/images/8048739.jpeg',
   },
   {
     key: 'decor',
     title: 'Décor',
     desc: 'Stunning setups that wow',
-    img: '/[image] - 8557707.jpeg',
+    img: '/images/8557707.jpeg',
   },
   {
     key: 'planning',
     title: 'Planning',
     desc: 'We design your perfect day',
-    img: '/[image] - 6098959.jpeg',
+    img: '/images/6098959.jpeg',
   },
   {
     key: 'execution',
     title: 'Execution',
     desc: 'Flawless delivery on your day',
-    img: '/[image] - 9806688.jpeg',
+    img: '/images/9806688.jpeg',
   },
 ]
 
@@ -43,7 +44,14 @@ export default function ServicesShowcase() {
           className="group relative overflow-hidden rounded-3xl ring-1 ring-white/10 bg-black/30 aspect-[4/5] min-h-[300px]"
         >
           {/* Image */}
-          <img src={s.img} alt={s.title} className="absolute inset-0 w-full h-full object-cover" />
+          <Image
+            src={s.img}
+            alt={s.title}
+            fill
+            sizes="(min-width:1280px) 25vw, (min-width:768px) 50vw, 100vw"
+            className="object-cover"
+            priority={i < 2}
+          />
 
           {/* Darkening gradient for readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />

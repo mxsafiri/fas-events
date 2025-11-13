@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight, MapPin } from 'lucide-react'
 
@@ -10,35 +11,35 @@ const events = [
     title: 'Modern Serenity Wedding',
     type: 'Wedding',
     location: 'Kunduchi Beach',
-    image: '/[image] - 6098959.jpeg',
+    image: '/images/6098959.jpeg',
   },
   {
     id: 2,
     title: 'Garden Reception',
     type: 'Wedding',
     location: 'Msasani',
-    image: '/[image] - 9806688.jpeg',
+    image: '/images/9806688.jpeg',
   },
   {
     id: 3,
     title: 'Classic Décor Showcase',
     type: 'Décor',
     location: 'Dar es Salaam',
-    image: '/[image] - 8557707.jpeg',
+    image: '/images/8557707.jpeg',
   },
   {
     id: 4,
     title: 'Elegant Table Setup',
     type: 'Catering & Styling',
     location: 'City Center',
-    image: '/[image] - 8048739.jpeg',
+    image: '/images/8048739.jpeg',
   },
   {
     id: 5,
     title: 'Ceremony Aisle',
     type: 'Wedding',
     location: 'Serenity Gardens',
-    image: '/[image] - 4082100.jpeg',
+    image: '/images/4082100.jpeg',
   },
 ]
 
@@ -117,7 +118,14 @@ export default function EventCarousel() {
         >
           {/* Background Image */}
           <div className="absolute inset-0">
-            <img src={events[currentIndex].image} alt={events[currentIndex].title} className="w-full h-full object-cover" />
+            <Image
+              src={events[currentIndex].image}
+              alt={events[currentIndex].title}
+              fill
+              sizes="100vw"
+              className="object-cover"
+              priority={currentIndex === 0}
+            />
           </div>
 
           {/* Content Overlay */}

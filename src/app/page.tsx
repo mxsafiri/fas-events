@@ -72,7 +72,22 @@ export default function Home() {
               animate={{ y: 0 }}
               transition={{ delay: 0.2, duration: 0.8 }}
             >
-              <Typewriter text="Build Your Event with us." speed={50} loop hold={1500} eraseSpeed={35} />
+              <Typewriter
+                texts={[
+                  'Build Your Event',
+                  'Build with your theme & budget',
+                  'Build with FAS',
+                ]}
+                highlightWords={[
+                  { word: 'Event', className: 'text-[var(--accent)]' },
+                  { word: 'budget', className: 'text-[var(--accent)]' },
+                  { word: 'FAS', className: 'text-[var(--accent)]' },
+                ]}
+                speed={50}
+                eraseSpeed={35}
+                hold={1500}
+                loop
+              />
             </motion.h1>
 
             <div className="mt-8 flex flex-col md:flex-row gap-4 md:gap-6 items-center md:justify-start justify-center z-10 relative">
@@ -106,9 +121,9 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.2 }}
-            className="pointer-events-none z-0 absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2"
+            className="pointer-events-none z-0 absolute -bottom-8 md:-bottom-12 left-1/2 -translate-x-1/2"
           >
-            <ArrowDown className="w-8 h-8 text-white animate-bounce" />
+            <ArrowDown className="w-6 h-6 md:w-8 md:h-8 text-white animate-bounce" />
           </motion.div>
         </motion.div>
       </section>
