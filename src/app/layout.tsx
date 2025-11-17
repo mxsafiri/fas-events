@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import LayoutProvider from "@/components/LayoutProvider";
 
 const body = Manrope({
   subsets: ["latin"],
@@ -24,11 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${body.variable} font-body antialiased bg-[var(--background)] text-[var(--foreground)]`}>
-        <div className="relative min-h-screen spotlight">
-          <Navbar />
-          {children}
-          <Footer />
-        </div>
+        <LayoutProvider>{children}</LayoutProvider>
       </body>
     </html>
   );
