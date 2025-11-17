@@ -13,6 +13,11 @@ interface WizardData {
   services: ServiceType[]
   date: string
   budget: string
+  name: string
+  email: string
+  phone: string
+  venue: string
+  message: string
 }
 
 export default function EventWizard() {
@@ -24,7 +29,14 @@ export default function EventWizard() {
     services: [],
     date: '',
     budget: '',
+    name: '',
+    email: '',
+    phone: '',
+    venue: '',
+    message: '',
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const eventTypes = [
     { id: 'wedding' as EventType, name: 'Wedding', Icon: Heart },
@@ -53,18 +65,62 @@ export default function EventWizard() {
     }
   }
 
-  const handleSubmit = () => {
-    // Here you would send to WhatsApp or email
-    const message = `New Event Request:
-Event Type: ${wizardData.eventType}
-Guests: ${wizardData.guestCount}
-Services: ${wizardData.services.join(', ')}
-Date: ${wizardData.date}
-Budget: ${wizardData.budget}`
-    
-    const whatsappUrl = `https://wa.me/255XXXXXXXXX?text=${encodeURIComponent(message)}`
-    window.open(whatsappUrl, '_blank')
-    setIsOpen(false)
+  const handleSubmit = async () => {
+    setIsSubmitting(true)
+    setSubmitError(null)
+
+    try {
+      const response = await fetch('/api/event-requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: wizardData.name,
+          email: wizardData.email,
+          phone: wizardData.phone,
+          eventType: wizardData.eventType,
+          eventDate: wizardData.date,
+          guestCount: wizardData.guestCount,
+          budgetRange: wizardData.budget,
+          venue: wizardData.venue,
+          message: `Services: ${wizardData.services.join(', ')}. ${wizardData.message}`,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        // Success - show tracking code and reset
+        const trackingCode = data.trackingCode
+        alert(
+          `🎉 Event Request Submitted!\n\n` +
+          `Your Tracking Code: ${trackingCode}\n\n` +
+          `Save this code to track your event status anytime.\n` +
+          `We'll contact you at ${wizardData.email} soon!`
+        )
+        
+        setIsOpen(false)
+        setStep(1)
+        setWizardData({
+          eventType: null,
+          guestCount: 50,
+          services: [],
+          date: '',
+          budget: '',
+          name: '',
+          email: '',
+          phone: '',
+          venue: '',
+          message: '',
+        })
+      } else {
+        setSubmitError(data.error || 'Failed to submit request')
+      }
+    } catch (error) {
+      setSubmitError('Network error. Please try again.')
+      console.error('Submission error:', error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -101,7 +157,7 @@ Budget: ${wizardData.budget}`
               <div className="bg-[var(--brand-green)] p-6 rounded-t-3xl">
                 <h2 className="text-3xl font-bold text-white text-center font-display">Build Your Perfect Event</h2>
                 <div className="flex justify-center mt-4 gap-2">
-                  {[1, 2, 3, 4].map((s) => (
+                  {[1, 2, 3, 4, 5].map((s) => (
                     <div
                       key={s}
                       className={`h-[6px] rounded-full transition-all ${
@@ -225,8 +281,78 @@ Budget: ${wizardData.budget}`
                     </motion.div>
                   )}
 
-                  {/* Step 4: Budget & Submit */}
+                  {/* Step 4: Contact Info */}
                   {step === 4 && (
+                    <motion.div
+                      key="step4"
+                      initial={{ x: 20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      exit={{ x: -20, opacity: 0 }}
+                      className="space-y-4"
+                    >
+                      <h3 className="text-2xl font-bold mb-6 text-[#1F1F1F]">Your Contact Information</h3>
+                      
+                      <div>
+                        <label className="block text-sm font-semibold mb-2 text-[#1F1F1F]">Full Name *</label>
+                        <input
+                          type="text"
+                          value={wizardData.name}
+                          onChange={(e) => setWizardData({ ...wizardData, name: e.target.value })}
+                          placeholder="John Doe"
+                          className="w-full px-4 py-3 border-2 border-[#E0D9CF] rounded-xl focus:border-[var(--brand-green)] focus:outline-none bg-white"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold mb-2 text-[#1F1F1F]">Email Address *</label>
+                        <input
+                          type="email"
+                          value={wizardData.email}
+                          onChange={(e) => setWizardData({ ...wizardData, email: e.target.value })}
+                          placeholder="john@example.com"
+                          className="w-full px-4 py-3 border-2 border-[#E0D9CF] rounded-xl focus:border-[var(--brand-green)] focus:outline-none bg-white"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold mb-2 text-[#1F1F1F]">Phone Number</label>
+                        <input
+                          type="tel"
+                          value={wizardData.phone}
+                          onChange={(e) => setWizardData({ ...wizardData, phone: e.target.value })}
+                          placeholder="+255 XXX XXX XXX"
+                          className="w-full px-4 py-3 border-2 border-[#E0D9CF] rounded-xl focus:border-[var(--brand-green)] focus:outline-none bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold mb-2 text-[#1F1F1F]">Venue / Location</label>
+                        <input
+                          type="text"
+                          value={wizardData.venue}
+                          onChange={(e) => setWizardData({ ...wizardData, venue: e.target.value })}
+                          placeholder="e.g., Dar es Salaam, Hyatt Regency"
+                          className="w-full px-4 py-3 border-2 border-[#E0D9CF] rounded-xl focus:border-[var(--brand-green)] focus:outline-none bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold mb-2 text-[#1F1F1F]">Additional Details</label>
+                        <textarea
+                          value={wizardData.message}
+                          onChange={(e) => setWizardData({ ...wizardData, message: e.target.value })}
+                          placeholder="Any special requests or details about your event..."
+                          rows={3}
+                          className="w-full px-4 py-3 border-2 border-[#E0D9CF] rounded-xl focus:border-[var(--brand-green)] focus:outline-none bg-white resize-none"
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* Step 5: Budget & Submit */}
+                  {step === 5 && (
                     <motion.div
                       key="step4"
                       initial={{ x: 20, opacity: 0 }}
@@ -303,34 +429,46 @@ Budget: ${wizardData.budget}`
               </div>
 
               {/* Footer */}
-              <div className="p-6 border-t flex justify-between gap-4">
-                {step > 1 && (
-                  <button
-                    onClick={() => setStep(step - 1)}
-                    className="px-6 py-3 border-2 border-[#E0D9CF] rounded-full font-semibold hover:bg-[#F6F1E9] transition-all flex items-center gap-2"
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                    Back
-                  </button>
+              <div className="p-6 border-t flex flex-col gap-3">
+                {submitError && (
+                  <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+                    {submitError}
+                  </div>
                 )}
-                {step < 4 ? (
-                  <button
-                    onClick={() => setStep(step + 1)}
-                    disabled={step === 1 && !wizardData.eventType}
-                    className="ml-auto px-6 py-3 bg-[var(--brand-green)] text-white rounded-full font-semibold hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Next
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleSubmit}
-                    className="ml-auto px-6 py-3 bg-[var(--brand-green)] text-white rounded-full font-semibold hover:shadow-lg transition-all flex items-center gap-2"
-                  >
-                    Send Request
-                    <Check className="w-4 h-4" />
-                  </button>
-                )}
+                <div className="flex justify-between gap-4">
+                  {step > 1 && (
+                    <button
+                      onClick={() => setStep(step - 1)}
+                      disabled={isSubmitting}
+                      className="px-6 py-3 border-2 border-[#E0D9CF] rounded-full font-semibold hover:bg-[#F6F1E9] transition-all flex items-center gap-2 disabled:opacity-50"
+                    >
+                      <ArrowLeft className="w-4 h-4" />
+                      Back
+                    </button>
+                  )}
+                  {step < 5 ? (
+                    <button
+                      onClick={() => setStep(step + 1)}
+                      disabled={
+                        (step === 1 && !wizardData.eventType) ||
+                        (step === 4 && (!wizardData.name || !wizardData.email))
+                      }
+                      className="ml-auto px-6 py-3 bg-[var(--brand-green)] text-white rounded-full font-semibold hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Next
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleSubmit}
+                      disabled={isSubmitting}
+                      className="ml-auto px-6 py-3 bg-[var(--brand-green)] text-white rounded-full font-semibold hover:shadow-lg transition-all flex items-center gap-2 disabled:opacity-50"
+                    >
+                      {isSubmitting ? 'Submitting...' : 'Send Request'}
+                      <Check className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
               </div>
             </motion.div>
           </motion.div>
