@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 import { 
   ArrowLeft, Calendar, Mail, Phone, MapPin, Users, DollarSign, 
   Clock, CheckCircle, XCircle, AlertCircle, Plus, Trash2, Save,
-  Calculator, FileText, Edit2
+  Calculator, FileText, Edit2, Utensils, Palette, Sparkles, Image
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -16,12 +16,26 @@ interface EventRequest {
   name: string
   email: string
   phone: string | null
+  event_category: string | null
   event_type: string | null
   event_date: string | null
   guest_count: number | null
   budget_range: string | null
   venue: string | null
   message: string | null
+  menu_category: string | null
+  menu_sections: {
+    appetizers: string[]
+    soups: string[]
+    salads: string[]
+    grill: string[]
+    pot: string[]
+    desserts: string[]
+  } | null
+  decor_theme: string | null
+  decor_vision: string | null
+  decor_colors: string[] | null
+  inspiration_images: Array<{name: string, data: string, type: string}> | null
   status: string
   created_at: string
 }
@@ -343,88 +357,222 @@ export default function EventRequestDetailPage() {
         transition={{ duration: 0.2 }}
       >
         {activeTab === 'details' && (
-          <div className="bg-white rounded-2xl border border-[#E0D9CF] p-6">
-            <h2 className="text-xl font-bold text-[#1F1F1F] mb-6">Event Information</h2>
-            
-            <div className="space-y-6">
-              {/* Contact Info */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-6">
+            {/* Contact Information Section */}
+            <div className="bg-white rounded-2xl border border-[#E0D9CF] p-6">
+              <h2 className="text-xl font-bold text-[#1F1F1F] mb-6 flex items-center gap-2">
+                <Mail className="w-6 h-6 text-[var(--brand-green)]" />
+                Contact Information
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex items-start gap-3">
-                  <Mail className="w-5 h-5 text-[var(--brand-green)] mt-1" />
+                  <div className="w-10 h-10 rounded-lg bg-[var(--brand-green)]/10 flex items-center justify-center flex-shrink-0">
+                    <Mail className="w-5 h-5 text-[var(--brand-green)]" />
+                  </div>
                   <div>
-                    <div className="text-sm text-[#1F1F1F]/60">Email</div>
+                    <div className="text-xs text-[#1F1F1F]/60 mb-1">Email Address</div>
                     <div className="font-medium text-[#1F1F1F]">{event.email}</div>
                   </div>
                 </div>
                 {event.phone && (
                   <div className="flex items-start gap-3">
-                    <Phone className="w-5 h-5 text-[var(--brand-green)] mt-1" />
+                    <div className="w-10 h-10 rounded-lg bg-[var(--brand-green)]/10 flex items-center justify-center flex-shrink-0">
+                      <Phone className="w-5 h-5 text-[var(--brand-green)]" />
+                    </div>
                     <div>
-                      <div className="text-sm text-[#1F1F1F]/60">Phone</div>
+                      <div className="text-xs text-[#1F1F1F]/60 mb-1">Phone Number</div>
                       <div className="font-medium text-[#1F1F1F]">{event.phone}</div>
                     </div>
                   </div>
                 )}
               </div>
+              {event.message && (
+                <div className="mt-6 p-4 bg-[#F8F4EE] rounded-xl border border-[#EDE7DE]">
+                  <div className="text-xs text-[#1F1F1F]/60 mb-2 font-semibold">Client Message</div>
+                  <p className="text-[#1F1F1F] leading-relaxed">{event.message}</p>
+                </div>
+              )}
+            </div>
 
-              {/* Event Details Grid */}
+            {/* Event Details Section */}
+            <div className="bg-white rounded-2xl border border-[#E0D9CF] p-6">
+              <h2 className="text-xl font-bold text-[#1F1F1F] mb-6 flex items-center gap-2">
+                <Calendar className="w-6 h-6 text-[var(--brand-green)]" />
+                Event Details
+              </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {event.event_category && (
+                  <div className="bg-gradient-to-br from-[var(--brand-green)]/5 to-[var(--brand-green)]/10 rounded-xl p-4 border border-[var(--brand-green)]/20">
+                    <div className="text-xs text-[#1F1F1F]/60 mb-1 font-semibold">Category</div>
+                    <div className="font-bold text-[#1F1F1F] capitalize">{event.event_category}</div>
+                  </div>
+                )}
                 {event.event_type && (
                   <div className="bg-[#F8F4EE] rounded-xl p-4 border border-[#EDE7DE]">
-                    <div className="text-xs text-[#1F1F1F]/60 mb-1">Event Type</div>
-                    <div className="font-semibold text-[#1F1F1F] capitalize">{event.event_type}</div>
+                    <div className="text-xs text-[#1F1F1F]/60 mb-1 font-semibold">Event Type</div>
+                    <div className="font-bold text-[#1F1F1F] capitalize">{event.event_type.replace('-', ' ')}</div>
                   </div>
                 )}
                 {event.event_date && (
                   <div className="bg-[#F8F4EE] rounded-xl p-4 border border-[#EDE7DE]">
-                    <div className="text-xs text-[#1F1F1F]/60 mb-1 flex items-center gap-1">
+                    <div className="text-xs text-[#1F1F1F]/60 mb-1 font-semibold flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
                       Event Date
                     </div>
-                    <div className="font-semibold text-[#1F1F1F]">{formatDate(event.event_date)}</div>
+                    <div className="font-bold text-[#1F1F1F]">{formatDate(event.event_date)}</div>
                   </div>
                 )}
                 {event.guest_count && (
                   <div className="bg-[#F8F4EE] rounded-xl p-4 border border-[#EDE7DE]">
-                    <div className="text-xs text-[#1F1F1F]/60 mb-1 flex items-center gap-1">
+                    <div className="text-xs text-[#1F1F1F]/60 mb-1 font-semibold flex items-center gap-1">
                       <Users className="w-3 h-3" />
-                      Guests
+                      Guest Count
                     </div>
-                    <div className="font-semibold text-[#1F1F1F]">{event.guest_count}</div>
+                    <div className="font-bold text-[#1F1F1F]">{event.guest_count} guests</div>
+                  </div>
+                )}
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                {event.venue && (
+                  <div className="bg-[#F8F4EE] rounded-xl p-4 border border-[#EDE7DE]">
+                    <div className="text-xs text-[#1F1F1F]/60 mb-1 font-semibold flex items-center gap-1">
+                      <MapPin className="w-3 h-3" />
+                      Venue / Location
+                    </div>
+                    <div className="font-medium text-[#1F1F1F]">{event.venue}</div>
                   </div>
                 )}
                 {event.budget_range && (
-                  <div className="bg-[#F8F4EE] rounded-xl p-4 border border-[#EDE7DE]">
-                    <div className="text-xs text-[#1F1F1F]/60 mb-1 flex items-center gap-1">
+                  <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 border-2 border-amber-200">
+                    <div className="text-xs text-[#1F1F1F]/60 mb-1 font-semibold flex items-center gap-1">
                       <DollarSign className="w-3 h-3" />
                       Budget Range
                     </div>
-                    <div className="font-semibold text-[#1F1F1F]">{event.budget_range}</div>
+                    <div className="font-bold text-[#1F1F1F]">{event.budget_range}</div>
                   </div>
                 )}
               </div>
+            </div>
 
-              {event.venue && (
-                <div className="flex items-start gap-3 bg-[#FDFBF8] rounded-xl p-4 border border-[#EDE7DE]">
-                  <MapPin className="w-5 h-5 text-[var(--brand-green)] mt-0.5" />
-                  <div>
-                    <div className="text-sm text-[#1F1F1F]/60">Venue / Location</div>
-                    <div className="font-medium text-[#1F1F1F]">{event.venue}</div>
+            {/* Menu Selection Section */}
+            {event.menu_category && (
+              <div className="bg-white rounded-2xl border border-[#E0D9CF] p-6">
+                <h2 className="text-xl font-bold text-[#1F1F1F] mb-6 flex items-center gap-2">
+                  <Utensils className="w-6 h-6 text-[var(--brand-green)]" />
+                  Menu Selections
+                </h2>
+                <div className="mb-6">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--brand-green)]/10 rounded-lg border border-[var(--brand-green)]/20">
+                    <span className="text-xs font-semibold text-[#1F1F1F]/60">Cuisine:</span>
+                    <span className="font-bold text-[var(--brand-green)] capitalize">{event.menu_category}</span>
                   </div>
                 </div>
-              )}
-
-              {event.message && (
-                <div className="bg-[#FDFBF8] rounded-xl p-4 border border-[#EDE7DE]">
-                  <div className="text-sm text-[#1F1F1F]/60 mb-2">Additional Details</div>
-                  <p className="text-[#1F1F1F]">{event.message}</p>
-                </div>
-              )}
-
-              <div className="pt-4 border-t border-[#E0D9CF] flex items-center gap-2 text-sm text-[#1F1F1F]/50">
-                <Clock className="w-4 h-4" />
-                Submitted {formatDate(event.created_at)}
+                {event.menu_sections && (
+                  <div className="space-y-4">
+                    {Object.entries(event.menu_sections).map(([section, items]) => {
+                      if (items.length === 0) return null
+                      return (
+                        <div key={section} className="bg-[#F8F4EE] rounded-xl p-4 border border-[#EDE7DE]">
+                          <div className="text-sm font-bold text-[#1F1F1F] mb-3 capitalize flex items-center gap-2">
+                            <div className="w-6 h-6 rounded-full bg-[var(--brand-green)] text-white flex items-center justify-center text-xs font-bold">
+                              {items.length}
+                            </div>
+                            {section}
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {items.map((item, idx) => (
+                              <span
+                                key={idx}
+                                className="px-3 py-1.5 bg-white rounded-lg text-sm text-[#1F1F1F] border border-[#E0D9CF]"
+                              >
+                                {item}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
               </div>
+            )}
+
+            {/* Décor & Styling Section */}
+            {(event.decor_theme || event.decor_vision || event.decor_colors || event.inspiration_images) && (
+              <div className="bg-white rounded-2xl border border-[#E0D9CF] p-6">
+                <h2 className="text-xl font-bold text-[#1F1F1F] mb-6 flex items-center gap-2">
+                  <Palette className="w-6 h-6 text-[var(--brand-green)]" />
+                  Décor & Styling
+                </h2>
+                <div className="space-y-6">
+                  {event.decor_theme && (
+                    <div>
+                      <div className="text-xs text-[#1F1F1F]/60 mb-2 font-semibold flex items-center gap-1">
+                        <Sparkles className="w-3 h-3" />
+                        Selected Theme
+                      </div>
+                      <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border border-purple-200">
+                        <span className="font-bold text-purple-700 capitalize">{event.decor_theme}</span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {event.decor_colors && event.decor_colors.length > 0 && (
+                    <div>
+                      <div className="text-xs text-[#1F1F1F]/60 mb-3 font-semibold">Color Palette</div>
+                      <div className="flex gap-3">
+                        {event.decor_colors.map((color, idx) => (
+                          <div key={idx} className="space-y-2">
+                            <div
+                              className="w-16 h-16 rounded-xl shadow-md border-2 border-white"
+                              style={{ backgroundColor: color }}
+                            />
+                            <div className="text-xs text-center font-mono text-[#1F1F1F]/60">{color}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {event.decor_vision && (
+                    <div className="bg-[#F8F4EE] rounded-xl p-4 border border-[#EDE7DE]">
+                      <div className="text-xs text-[#1F1F1F]/60 mb-2 font-semibold">Décor Vision</div>
+                      <p className="text-[#1F1F1F] leading-relaxed">{event.decor_vision}</p>
+                    </div>
+                  )}
+
+                  {event.inspiration_images && event.inspiration_images.length > 0 && (
+                    <div>
+                      <div className="text-xs text-[#1F1F1F]/60 mb-3 font-semibold flex items-center gap-1">
+                        <Image className="w-3 h-3" />
+                        Inspiration Images ({event.inspiration_images.length})
+                      </div>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {event.inspiration_images.map((img, idx) => (
+                          <div key={idx} className="group relative aspect-square rounded-xl overflow-hidden border-2 border-[#E0D9CF] hover:border-[var(--brand-green)] transition-all">
+                            <img
+                              src={img.data}
+                              alt={img.name}
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all flex items-center justify-center">
+                              <div className="text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity px-2 text-center">
+                                {img.name}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Submission Info */}
+            <div className="bg-[#F8F4EE] rounded-xl p-4 border border-[#EDE7DE] flex items-center gap-2 text-sm text-[#1F1F1F]/60">
+              <Clock className="w-4 h-4" />
+              Submitted {formatDate(event.created_at)}
             </div>
           </div>
         )}

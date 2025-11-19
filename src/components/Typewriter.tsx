@@ -1,84 +1,39 @@
 "use client"
 
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useState } from "react"
+import { AnimatePresence, motion } from "framer-motion"
 
 type Highlight = { word: string; className?: string }
 
 type Props = {
   text?: string
   texts?: string[]
-  speed?: number
   className?: string
   loop?: boolean
-  hold?: number // ms to hold when fully typed
-  eraseSpeed?: number // ms per character when erasing
+  hold?: number // ms to hold each text
   highlightWords?: Highlight[]
 }
 
 export default function Typewriter({
   text,
   texts,
-  speed = 60,
   className = "",
-  loop = false,
-  hold = 1200,
-  eraseSpeed = 35,
+  loop = true,
+  hold = 3000,
   highlightWords = [],
 }: Props) {
-  const [displayed, setDisplayed] = useState("")
-  const [done, setDone] = useState(false)
   const [idx, setIdx] = useState(0)
-  const dirRef = useRef<1 | -1>(1) // 1 typing, -1 deleting
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const activeText = (texts && texts.length ? texts[idx] : (text ?? ""))
+  const textArray = texts && texts.length ? texts : [text ?? ""]
 
   useEffect(() => {
-    if (timerRef.current) clearTimeout(timerRef.current)
-    setDisplayed("")
-    setDone(false)
-    dirRef.current = 1
+    if (!loop || textArray.length <= 1) return
+    
+    const interval = setInterval(() => {
+      setIdx(prev => (prev + 1) % textArray.length)
+    }, hold)
 
-    const tick = () => {
-      setDisplayed(prev => {
-        const dir = dirRef.current
-        if (dir === 1) {
-          const next = activeText.slice(0, prev.length + 1)
-          if (next.length === activeText.length) {
-            setDone(true)
-            if (loop) {
-              timerRef.current = setTimeout(() => {
-                setDone(false)
-                dirRef.current = -1
-                tick()
-              }, hold)
-            }
-            return next
-          }
-          timerRef.current = setTimeout(tick, speed)
-          return next
-        } else {
-          // deleting
-          const next = prev.slice(0, -1)
-          if (next.length === 0) {
-            dirRef.current = 1
-            if (texts && texts.length > 1 && loop) {
-              setIdx(i => (i + 1) % texts.length)
-            }
-            timerRef.current = setTimeout(tick, speed)
-            return next
-          }
-          timerRef.current = setTimeout(tick, eraseSpeed)
-          return next
-        }
-      })
-    }
-
-    timerRef.current = setTimeout(tick, speed)
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current)
-    }
-  }, [activeText, speed, loop, hold, eraseSpeed, texts?.length])
+    return () => clearInterval(interval)
+  }, [loop, hold, textArray.length])
 
   const renderHighlighted = (s: string): React.ReactNode => {
     if (!highlightWords || highlightWords.length === 0) return s
@@ -112,9 +67,19 @@ export default function Typewriter({
   }
 
   return (
-    <span className={className}>
-      {renderHighlighted(displayed)}
-      <span className={`ml-1 inline-block w-[2px] h-[1em] align-[-0.15em] bg-white ${done && !loop ? 'opacity-0' : 'animate-pulse'}`} />
+    <span className={`inline-block ${className}`}>
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={idx}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+          className="inline-block"
+        >
+          {renderHighlighted(textArray[idx])}
+        </motion.span>
+      </AnimatePresence>
     </span>
   )
 }

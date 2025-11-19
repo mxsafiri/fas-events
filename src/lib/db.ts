@@ -96,16 +96,71 @@ export async function initializeSchema() {
         name TEXT NOT NULL,
         email TEXT NOT NULL,
         phone TEXT,
+        event_category VARCHAR(50),
         event_type TEXT,
         event_date DATE,
         guest_count INTEGER,
-        budget_range TEXT,
         venue TEXT,
+        budget_range TEXT,
+        menu_category VARCHAR(50),
+        menu_sections JSONB,
+        decor_theme VARCHAR(50),
+        decor_vision TEXT,
+        decor_colors JSONB,
+        inspiration_images JSONB,
         message TEXT,
         status VARCHAR(20) DEFAULT 'new',
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()
       )
+    `)
+
+    // Add new columns to existing table if they don't exist
+    await client.query(`
+      DO $$ 
+      BEGIN
+        -- Add event_category if not exists
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                      WHERE table_name='event_requests' AND column_name='event_category') THEN
+          ALTER TABLE event_requests ADD COLUMN event_category VARCHAR(50);
+        END IF;
+
+        -- Add menu_category if not exists
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                      WHERE table_name='event_requests' AND column_name='menu_category') THEN
+          ALTER TABLE event_requests ADD COLUMN menu_category VARCHAR(50);
+        END IF;
+
+        -- Add menu_sections if not exists
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                      WHERE table_name='event_requests' AND column_name='menu_sections') THEN
+          ALTER TABLE event_requests ADD COLUMN menu_sections JSONB;
+        END IF;
+
+        -- Add decor_theme if not exists
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                      WHERE table_name='event_requests' AND column_name='decor_theme') THEN
+          ALTER TABLE event_requests ADD COLUMN decor_theme VARCHAR(50);
+        END IF;
+
+        -- Add decor_vision if not exists
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                      WHERE table_name='event_requests' AND column_name='decor_vision') THEN
+          ALTER TABLE event_requests ADD COLUMN decor_vision TEXT;
+        END IF;
+
+        -- Add decor_colors if not exists
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                      WHERE table_name='event_requests' AND column_name='decor_colors') THEN
+          ALTER TABLE event_requests ADD COLUMN decor_colors JSONB;
+        END IF;
+
+        -- Add inspiration_images if not exists
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                      WHERE table_name='event_requests' AND column_name='inspiration_images') THEN
+          ALTER TABLE event_requests ADD COLUMN inspiration_images JSONB;
+        END IF;
+      END $$;
     `)
 
     // Create index on tracking_code for fast lookups

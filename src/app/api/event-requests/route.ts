@@ -9,12 +9,19 @@ export async function POST(request: NextRequest) {
       name, 
       email, 
       phone, 
+      message,
+      eventCategory,
       eventType, 
       eventDate, 
       guestCount, 
-      budgetRange, 
-      venue, 
-      message 
+      venue,
+      budgetRange,
+      menuCategory,
+      menuSections,
+      decorTheme,
+      decorVision,
+      decorColors,
+      inspirationImages
     } = body
 
     // Validate required fields
@@ -28,23 +35,39 @@ export async function POST(request: NextRequest) {
     // Generate unique tracking code
     const trackingCode = generateTrackingCode()
 
-    // Insert into database (convert empty strings to null for optional fields)
+    // Convert complex objects to JSON strings for storage
+    const menuSectionsJson = menuSections ? JSON.stringify(menuSections) : null
+    const decorColorsJson = decorColors && decorColors.length > 0 ? JSON.stringify(decorColors) : null
+    const inspirationImagesJson = inspirationImages && inspirationImages.length > 0 ? JSON.stringify(inspirationImages) : null
+
+    // Insert into database with all fields
     const result = await query(
       `INSERT INTO event_requests 
-       (tracking_code, name, email, phone, event_type, event_date, guest_count, budget_range, venue, message, status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'new')
+       (tracking_code, name, email, phone, message, 
+        event_category, event_type, event_date, guest_count, venue, budget_range,
+        menu_category, menu_sections, 
+        decor_theme, decor_vision, decor_colors, inspiration_images,
+        status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, 'new')
        RETURNING *`,
       [
         trackingCode,
         name, 
         email, 
-        phone || null, 
+        phone || null,
+        message || null,
+        eventCategory || null,
         eventType || null, 
-        eventDate || null,  // Convert empty string to null
-        guestCount || null, 
-        budgetRange || null, 
-        venue || null, 
-        message || null
+        eventDate || null,
+        guestCount || null,
+        venue || null,
+        budgetRange || null,
+        menuCategory || null,
+        menuSectionsJson,
+        decorTheme || null,
+        decorVision || null,
+        decorColorsJson,
+        inspirationImagesJson
       ]
     )
 
