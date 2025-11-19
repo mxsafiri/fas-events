@@ -83,8 +83,6 @@ export default function Home() {
                   { word: 'budget', className: 'text-[var(--accent)]' },
                   { word: 'FAS', className: 'text-[var(--accent)]' },
                 ]}
-                speed={50}
-                eraseSpeed={35}
                 hold={1500}
                 loop
               />
