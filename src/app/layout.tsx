@@ -13,16 +13,6 @@ export const metadata: Metadata = {
   title: "Fas Exclusive Planners - Creating Memorable Moments in Dar es Salaam",
   description: "Full-service event planning, catering & décor — seamless, stylish, unforgettable. Weddings, corporate events, and private celebrations in Dar es Salaam, Tanzania.",
   keywords: "event planning, wedding planner, catering, décor, Dar es Salaam, Tanzania, corporate events",
-  icons: {
-    icon: [
-      { url: '/favicon.ico' },
-      { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
-      { url: '/favicon.svg', type: 'image/svg+xml' },
-    ],
-    apple: [
-      { url: '/apple-touch-icon.png' },
-    ],
-  },
 };
 
 export default function RootLayout({
