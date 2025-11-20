@@ -1,5 +1,5 @@
-import EventWizardContent from '@/components/EventWizardContent'
+import EventWizardNew from '@/components/EventWizardNew'
 
 export default function WizardPage() {
-  return <EventWizardContent />
+  return <EventWizardNew />
 }
