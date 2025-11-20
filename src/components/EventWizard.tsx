@@ -239,7 +239,7 @@ export default function EventWizard() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center md:p-4"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 md:flex md:items-center md:justify-center md:p-4"
             onClick={(e) => {
               // Only allow close on desktop when clicking backdrop
               if (window.innerWidth >= 768 && e.target === e.currentTarget) {
@@ -248,11 +248,12 @@ export default function EventWizard() {
             }}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 20, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white md:rounded-3xl shadow-2xl w-full md:max-w-5xl h-full md:h-auto md:max-h-[90vh] overflow-hidden flex flex-col"
+              className="absolute inset-0 md:relative md:rounded-3xl bg-white shadow-2xl w-full md:max-w-5xl h-full md:h-auto md:max-h-[90vh] overflow-hidden flex flex-col"
             >
               {/* Header with Progress Stepper */}
               <div className="bg-gradient-to-r from-[var(--brand-green)] to-[var(--brand-green-2)] p-4 md:p-6 relative">
