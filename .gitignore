@@ -41,7 +41,12 @@ yarn-error.log*
 next-env.d.ts
 
 # large video files (use external hosting)
-public/images/*.mp4
-public/images/*.MP4
-public/images/Videos/*.mp4
-public/images/Videos/*.MP4
+# Only ignore large videos in images directories
+public/images/**/*.mp4
+public/images/**/*.MP4
+public/images/**/*.mov
+public/images/**/*.MOV
+public/images/**/*.avi
+public/images/**/*.AVI
+
+# Keep small videos in public root for landing page backgrounds
