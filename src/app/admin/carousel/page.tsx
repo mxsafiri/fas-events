@@ -1,6 +1,7 @@
 'use client'
 
 import { Construction } from 'lucide-react'
+import { fileURLToPath } from 'url'
 
 export default function AdminCarouselPage() {
   return (
