@@ -221,16 +221,16 @@ export default function EventWizard() {
 
   return (
     <>
-      {/* Trigger Button */}
-      <motion.button
-        onClick={() => setIsOpen(true)}
+      {/* Trigger Button - Redirect to wizard page on mobile, modal on desktop */}
+      <motion.a
+        href="/wizard"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="mx-auto block px-8 py-4 bg-[var(--brand-green)] text-white rounded-full font-semibold text-lg shadow-md hover:shadow-lg transition-all flex items-center gap-2"
+        className="mx-auto block px-8 py-4 bg-[var(--brand-green)] text-white rounded-full font-semibold text-lg shadow-md hover:shadow-lg transition-all flex items-center gap-2 w-fit"
       >
         <Wrench className="w-5 h-5" />
         Build Your Event
-      </motion.button>
+      </motion.a>
 
       {/* Wizard Modal */}
       <AnimatePresence>
