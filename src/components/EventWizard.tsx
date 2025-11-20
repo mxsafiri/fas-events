@@ -253,7 +253,7 @@ export default function EventWizard() {
               exit={{ y: 20, opacity: 0 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               onClick={(e) => e.stopPropagation()}
-              className="absolute inset-0 md:relative md:rounded-3xl bg-white shadow-2xl w-full md:max-w-5xl h-full md:h-auto md:max-h-[90vh] overflow-hidden flex flex-col"
+              className="fixed inset-0 md:relative md:inset-auto md:rounded-3xl bg-white shadow-2xl w-full md:max-w-5xl min-h-screen md:min-h-0 md:max-h-[90vh] overflow-hidden flex flex-col z-[60]"
             >
               {/* Header with Progress Stepper */}
               <div className="bg-gradient-to-r from-[var(--brand-green)] to-[var(--brand-green-2)] p-4 md:p-6 relative">
