@@ -1,0 +1,15 @@
+# Exclude from Vercel deployment (not from git)
+node_modules
+.git
+*.log
+.env.local
+.env*.local
+.DS_Store
+
+# Large files not needed for deployment
+public/images/*.mp4
+public/images/*.MP4
+public/images/Videos/
+database-migration-add-wizard-fields.sql
+*.md
+!README.md
