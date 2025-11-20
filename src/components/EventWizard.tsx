@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Check, ArrowRight, ArrowLeft, Sparkles, Wrench } from 'lucide-react'
+import { Check, ArrowRight, ArrowLeft, Sparkles, Wrench, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 // Import step components
@@ -239,27 +239,41 @@ export default function EventWizard() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-            onClick={() => setIsOpen(false)}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center md:p-4"
+            onClick={(e) => {
+              // Only allow close on desktop when clicking backdrop
+              if (window.innerWidth >= 768 && e.target === e.currentTarget) {
+                setIsOpen(false)
+              }
+            }}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col"
+              className="bg-white md:rounded-3xl shadow-2xl w-full md:max-w-5xl h-full md:h-auto md:max-h-[90vh] overflow-hidden flex flex-col"
             >
               {/* Header with Progress Stepper */}
-              <div className="bg-gradient-to-r from-[var(--brand-green)] to-[var(--brand-green-2)] p-6">
-                <h2 className="text-2xl font-bold text-white text-center mb-6">
+              <div className="bg-gradient-to-r from-[var(--brand-green)] to-[var(--brand-green-2)] p-4 md:p-6 relative">
+                {/* Close button for mobile */}
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="md:hidden absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+                  aria-label="Close wizard"
+                >
+                  <X className="w-5 h-5 text-white" />
+                </button>
+                
+                <h2 className="text-xl md:text-2xl font-bold text-white text-center mb-4 md:mb-6 pr-8 md:pr-0">
                   Build Your Perfect Event
                 </h2>
-                <div className="flex items-center justify-between max-w-4xl mx-auto">
+                <div className="flex items-center justify-between max-w-4xl mx-auto overflow-x-auto pb-2">
                   {steps.map((s, idx) => (
-                    <div key={s.num} className="flex items-center">
+                    <div key={s.num} className="flex items-center flex-shrink-0">
                       <div className="flex flex-col items-center">
                         <div
-                          className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
+                          className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-semibold transition-all ${
                             s.num < step
                               ? 'bg-white text-[var(--brand-green)]'
                               : s.num === step
@@ -267,10 +281,10 @@ export default function EventWizard() {
                               : 'bg-white/20 text-white/60'
                           }`}
                         >
-                          {s.num < step ? <Check className="w-5 h-5" /> : s.num}
+                          {s.num < step ? <Check className="w-4 h-4 md:w-5 md:h-5" /> : s.num}
                         </div>
                         <span
-                          className={`text-xs mt-1 font-medium ${
+                          className={`text-[10px] md:text-xs mt-1 font-medium hidden md:block ${
                             s.num <= step ? 'text-white' : 'text-white/50'
                           }`}
                         >
@@ -279,7 +293,7 @@ export default function EventWizard() {
                       </div>
                       {idx < steps.length - 1 && (
                         <div
-                          className={`w-8 lg:w-16 h-[2px] mx-1 lg:mx-2 transition-all ${
+                          className={`w-4 md:w-8 lg:w-16 h-[2px] mx-1 lg:mx-2 transition-all ${
                             s.num < step ? 'bg-white' : 'bg-white/20'
                           }`}
                         />
@@ -290,7 +304,7 @@ export default function EventWizard() {
               </div>
 
               {/* Content - Scrollable */}
-              <div className="flex-1 overflow-y-auto p-8">
+              <div className="flex-1 overflow-y-auto p-4 md:p-8">
                 <AnimatePresence mode="wait">
                   {step === 1 && (
                     <motion.div
@@ -417,7 +431,7 @@ export default function EventWizard() {
               </div>
 
               {/* Footer */}
-              <div className="p-6 bg-gray-50 border-t border-gray-100">
+              <div className="p-4 md:p-6 bg-gray-50 border-t border-gray-100">
                 {submitError && (
                   <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm flex items-center gap-2">
                     <div className="w-5 h-5 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
