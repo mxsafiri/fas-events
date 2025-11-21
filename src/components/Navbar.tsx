@@ -35,7 +35,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <motion.div whileHover={{ scale: 1.02 }} className={`text-2xl font-bold font-display ${isScrolled ? 'text-[#1F1F1F]' : 'text-white'}`}>
-              Fas Exclusive
+              F.A.S Exclusive Planners
             </motion.div>
           </Link>
 
